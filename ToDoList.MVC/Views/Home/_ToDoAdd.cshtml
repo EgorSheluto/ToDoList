@@ -1,0 +1,126 @@
+﻿@model ToDoAddModel;
+
+<form id="to-do-add" asp-action="Post" asp-controller="Home" method="post">
+    <table>
+        <tr>
+            <td><label asp-for="Title"></label></td>
+            <td><input asp-for="Title" /></td>
+            <td><span asp-validation-for="Title"></span></td>
+        </tr>
+    </table>
+
+    <input type="submit" value="Add To-Do item" />
+</form>
+<script>
+    //const { fetchWrapper } = require("../../wwwroot/js/fetchWrapper");
+
+    async function fetchWrapper(
+        url,
+        method,
+        refreshUrl,
+        body,
+        success,
+        fail
+    ) {
+        /*if (url === null || url == undefined || url === '') {
+            throw;
+        }*/
+
+        const requestOptions = {
+            headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json',
+                'Authorization': `Bearer ${localStorage.getItem('token') || null}`
+            },
+            method: method || 'GET',
+            body: body
+        };
+
+        const response = await fetch(url, requestOptions);
+        const jsonResponse = response.headers.has('Token-Expired') &&
+            response.headers.has('WWW-Authenticate') &&
+            'Unhandled exception'/* ||
+            await response.json()*/;
+
+        if (response.ok) {
+            return await success(jsonResponse);
+        }
+
+        if (response.status === 401 && response.headers.has('Token-Expired')) {
+            let refreshReqOpt = requestOptions;
+            refreshReqOpt = {
+                ...requestOptions,
+                headers: {
+                    ...requestOptions.headers,
+                    'Authorization-Refresh': localStorage.getItem('refreshToken') || null
+                },
+                method: 'POST'
+            };
+
+            const refreshResponse = await fetch(refreshUrl, refreshReqOpt);
+
+            if (!refreshResponse.ok) {
+                return await fail('Error while getting refresh token');
+            }
+
+            const jsonRefreshResponse = await refreshResponse.json();
+
+            localStorage.setItem('token', jsonRefreshResponse.newJwtToken);
+            localStorage.setItem('refreshToken', jsonRefreshResponse.newRefreshToken);
+
+            return await fetchWrapper(
+                url,
+                method,
+                refreshUrl,
+                body,
+                success,
+                fail
+            );
+        } else {
+            return await fail(jsonResponse);
+        }
+    }
+
+    (function () {
+        let form = document.querySelector("#to-do-add");
+        let submit = document.querySelector("#to-do-add input");
+        form.addEventListener("submit", (e) => {
+            e.preventDefault();
+
+            const postUrl = @*`@Url.Action("Post", "Home")?title=${submit.value}`*@'https://localhost:5001/api/ToDoItem/Post';
+            const refreshUrl = @*`@Url.Action("Refresh", "Login")`*@'https://localhost:5001/api/Account/refresh';
+
+            @*const opts = {
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json',
+                    'Authorization': `Bearer ${localStorage.getItem('token') || null}`
+                },
+                method: 'POST'
+            };
+
+            fetch(`@Url.Action("Post", "Home")?title=${submit.value}`, opts)
+                .then(response => {
+                    if (response.ok) {
+                        webSocket.send("send");
+                    } else if (response.status === 401) {
+                        window.location.href = '@Url.Action("Index", "Login")';
+                    }
+                })
+                .catch(err => console.log(err));*@
+            const data = {
+                Title: submit.value
+            };
+            fetchWrapper(
+                postUrl,
+                'POST',
+                refreshUrl,
+                JSON.stringify(data),
+                () => webSocket.send("send"),
+                () => window.location.href = '@Url.Action("Index", "Login")'
+            );
+
+            
+        })
+    }());
+</script>

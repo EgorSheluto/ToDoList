@@ -1,0 +1,107 @@
+﻿@{
+    ViewData["Title"] = "Home";
+}
+
+<section id="home">
+    @await Html.PartialAsync("_ToDoAdd")
+    <div id="to-do-list"></div>
+</section>
+<script>
+    //const { fetchWrapper } = require("../../wwwroot/js/fetchWrapper");
+
+    let webSocket;
+
+    (function () {
+        const getWebSocketMessages = function (onMessageReceived) {
+            const url = `wss://localhost:5001/api/ToDoItem/Get`;
+
+            webSocket = new WebSocket(url);
+
+            webSocket.onmessage = onMessageReceived;
+        };
+
+        let listElement = document.getElementById('to-do-list');
+
+        getWebSocketMessages(function (message) {
+            listElement.innerHTML = null;
+            let jsonData = message.data || null;
+            let data = JSON.parse(jsonData);
+
+            const statusEnum = {
+                New: 1,
+                InProgress: 2,
+                Completed: 3
+            };
+
+            const statusOptions = (statusId) => {
+                let options = '';
+                for (let status in statusEnum) {
+                    if (statusEnum.hasOwnProperty(status)) {
+                        options += `<option value="${statusEnum[status]}" ${statusId === statusEnum[status] && "selected"}>${status}</option>`;
+                    }
+                }
+                return options;
+            }
+
+            if (data) {
+                data.forEach((value) => {
+                    listElement.innerHTML = listElement.innerHTML +=
+                        `<div class="to-do-list__item" data-key="${value.Id}">
+                             <span class="to-do-list__item-title">${value.Title}</span>
+                             <select name="StatusList">
+                                 ${statusOptions(value.StatusId)}
+                             </select>
+                        </div>`;
+                });
+                setItemListeners();
+            } else {
+                listElement.innerHTML = 'To-Do List is empty';
+            }
+        });
+
+        const setItemListeners = () => {
+            let itemsSelects = document.querySelectorAll('#to-do-list .to-do-list__item select');
+            itemsSelects.forEach((itemSelect) =>
+                itemSelect.addEventListener("change", (e) => {
+                    let itemId = itemSelect.parentNode.getAttribute("data-key");
+                    let value = e.target.value;
+
+                    const updateUrl = @*`@Url.Action("Put", "Home")?id=${itemId}&statusId=${value}`*@'https://localhost:5001/api/ToDoItem/Put';
+                    const refreshUrl = @*`@Url.Action("Refresh", "Login")`*@'https://localhost:5001/api/Account/Refresh';
+
+                    /*const opts = {
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Accept': 'application/json',
+                            'Authorization': `Bearer ${localStorage.getItem('token') || null}`
+                        },
+                        method: 'PUT'
+                    };*/
+
+                    @*fetch(`@Url.Action("Put", "Home")?id=${itemId}&statusId=${value}`, opts)
+                        .then(response => {
+                            if (response.ok) {
+                                webSocket.send("send");
+                            } else if (response.status === 401) {
+                                window.location.href = '@Url.Action("Index", "Login")';
+                            }
+                        })
+                        .catch(err => console.log(err));*@
+                    const data = {
+                        Id: itemId,
+                        StatusId: value
+                    };
+                    fetchWrapper(
+                        updateUrl,
+                        'PUT',
+                        refreshUrl,
+                        JSON.stringify(data),
+                        () => webSocket.send("send"),
+                        () => window.location.href = '@Url.Action("Index", "Login")'
+                    );
+                })
+
+            );
+        }
+    }());
+</script>

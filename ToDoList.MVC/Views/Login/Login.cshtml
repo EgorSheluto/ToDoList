@@ -1,0 +1,62 @@
+﻿@model LoginModel
+
+@{ 
+    ViewData["Title"] = "Authorization";
+}
+
+<form id="login-form" asp-action="Login" asp-controller="Login" method="post">
+    <table>
+        <tr>
+            <td><label asp-for="Login"></label></td>
+            <td><input asp-for="Login" /></td>
+            <td><span asp-validation-for="Login"></span></td>
+        </tr>
+        <tr>
+            <td><label asp-for="Password"></label></td>
+            <td><input asp-for="Password" /></td>
+            <td><span asp-validation-for="Password"></span></td>
+        </tr>
+    </table>
+
+    <input type="submit" value="Login" />
+</form>
+<script>
+    (function () {
+        let form = document.querySelector("#login-form");
+        let inputs = document.querySelectorAll("#login-form input");
+        form.addEventListener("submit", (e) => {
+            e.preventDefault();
+
+            let login = inputs[0].value;
+            let password = inputs[1].value;
+            console.log(login, password);
+
+            const opts = {
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json',
+                    'Authorization': `Basic ${btoa(`${login}:${password}`)}`
+                },
+                credentials: 'include',
+                method: 'POST'
+            };
+
+            const url = 'https://localhost:5001/api/Account/Login';
+            fetch(@*`@Url.Action("Login", "Login")`*@url, opts)
+                .then(response => {
+                    if (response.ok) {
+                        return response.json();
+                    } else {
+                        return null;
+                    }
+                })
+                .then(json => {
+                    json.jwtToken && localStorage.setItem('token', json.jwtToken);
+                    json.refreshToken && localStorage.setItem('refreshToken', json.refreshToken);
+                    console.log(json);
+                })
+                .then(_ => window.location.href = '@Url.Action("Index", "Home")')
+                .catch(err => console.log(err));
+        })
+    }());
+</script>
