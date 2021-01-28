@@ -1,10 +1,19 @@
-﻿html {
+﻿* {
+    margin: 0;
+    padding: 0;
+    -webkit-box-sizing: border-box;
+    box-sizing: border-box;
+}
+
+html {
+    position: relative;
     font-size: 10px;
 }
 
 body {
-    width: 100vw;
-    height: 100%;
+    width: 100%;
+    height: 100vh;
+    overflow-y: auto;
 }
 
 form#login-form {
@@ -21,17 +30,51 @@ form .form-data {
 }
 
 label {
-    font-size: 2em;
+    font-size: 1.4em;
     margin: .5em;
 }
 
 input {
-    font-size: 2em;
-    margin: .5em;
+    font-size: 1.4em;
+    margin: .2em;
+}
+
+input[type=submit] {
+    padding: .5em;
 }
 
 span .error {
-    font-size: 1.5em;
+    font-size: 1.2em;
     margin: .5em;
     color: #b62525;
+}
+
+#to-do-list {
+    display: flex;
+    width: 100%;
+    flex-direction: row;
+    flex-wrap: wrap;
+    margin-top: 5em;
+}
+
+#to-do-list .to-do-list__item {
+    display: flex;
+    flex: 0 0 calc(20% - .4em);
+    flex-wrap: wrap;
+    border: .1em solid black;
+    border-radius: .9em;
+    font-size: 1.4em;
+    padding: .5em;
+    margin: .2em;
+}
+
+#to-do-list .to-do-list__item .to-do-list__item-title {
+    flex: 0 0 100%;
+    margin-bottom: 4em;
+}
+
+#to-do-list .to-do-list__item select {
+    flex: 0 0 100%;
+    width: 50%;
+    margin: 4em 0 15%;
 }

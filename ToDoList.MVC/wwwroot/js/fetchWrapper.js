@@ -2,34 +2,33 @@
     url,
     method,
     refreshUrl,
+    body,
     success,
+    unreg,
     fail
 ) {
-    /*if (url === null || url == undefined || url === '') {
-        throw;
-    }*/
-
     const requestOptions = {
         headers: {
             'Content-Type': 'application/json',
             'Accept': 'application/json',
             'Authorization': `Bearer ${localStorage.getItem('token') || null}`
         },
-        method: method || 'GET'
+        method: method || 'GET',
+        body: body || null
     };
 
     const response = await fetch(url, requestOptions);
     const jsonResponse = response.headers.has('Token-Expired') &&
         response.headers.has('WWW-Authenticate') &&
-        'Unhandled exception' ||
-        await response.json();
+        'Unhandled exception'/* ||
+        await response.json()*/;
 
     if (response.ok) {
         return await success(jsonResponse);
     }
 
     if (response.status === 401 && response.headers.has('Token-Expired')) {
-        const refreshReqOpt = requestOptions;
+        let refreshReqOpt = requestOptions;
         refreshReqOpt = {
             ...requestOptions,
             headers: {
@@ -54,12 +53,14 @@
             url,
             method,
             refreshUrl,
+            body,
             success,
+            unreg,
             fail
         );
+    } else if (response.status === 401 && !response.headers.has('Token-Expired')) {
+        return await unreg(jsonResponse);
     } else {
         return await fail(jsonResponse);
     }
 }
-
-module.exports = { fetchWrapper };

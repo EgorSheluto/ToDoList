@@ -78,7 +78,8 @@
                         refreshUrl,
                         JSON.stringify(data),
                         () => webSocket.send("send"),
-                        () => window.location.href = '@Url.Action("Index", "Login")'
+                        () => window.location.href = '@Url.Action("Index", "Login")',
+                        f => f
                     );
                 })
 
