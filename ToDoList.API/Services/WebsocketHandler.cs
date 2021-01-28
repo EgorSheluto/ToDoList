@@ -28,10 +28,12 @@ namespace ToDoList.API.Services
             SetupCleanUpTask();
         }
 
-        public async Task Handle(Guid id, WebSocket webSocket,/*, Func<IQueryable<ToDoItemModel>, Task> func*/IRepository<ToDoItemModel> rep)
+        // Signing every client and listening to them
+        public async Task Handle(Guid id, WebSocket webSocket, IRepository<ToDoItemModel> rep)
         {
             SocketConnection socketConnection;
 
+            // Add new client to the collection
             lock (websocketConnections)
             {
                 socketConnection = new SocketConnection
@@ -42,18 +44,22 @@ namespace ToDoList.API.Services
                 websocketConnections.Add(socketConnection);
             }
 
+            // Send datas for new client
             await SendMessageToSocket(id, rep);
 
             while (webSocket.State == WebSocketState.Open)
             {
+                // Listening for client and send datas when receive messages from clients
                 var message = await ReceiveMessage(id, webSocket);
                 await SendMessageToSockets(rep);
             }
 
+            // Remove client from collection when websocket is not open
             websocketConnections.Remove(socketConnection);
             await webSocket.CloseAsync(WebSocketCloseStatus.NormalClosure, "Connection closed.", CancellationToken.None);
         }
 
+        // Here is simple realization without real message/s
         private async Task<string> ReceiveMessage(Guid id, WebSocket webSocket)
         {
             var arraySegment = new ArraySegment<byte>(new byte[4096]);
@@ -61,6 +67,7 @@ namespace ToDoList.API.Services
             return null;
         }
 
+        // Send data for every client on adding or updating list
         private async Task SendMessageToSockets(IRepository<ToDoItemModel> rep)
         {
             IEnumerable<SocketConnection> toSentTo;
@@ -82,6 +89,7 @@ namespace ToDoList.API.Services
             await Task.WhenAll(tasks);
         }
 
+        // Initial data sending for client
         private async Task SendMessageToSocket(Guid id, IRepository<ToDoItemModel> rep)
         {
             SocketConnection toSentTo;
@@ -104,9 +112,10 @@ namespace ToDoList.API.Services
         {
             var items = await rep.QueryNoTracking().ToListAsync();
 
-            return _mapper.Map<List<ToDoItemDto>>(items); /*await _toDoItemRepository.QueryNoTracking().ToListAsync();*/
+            return _mapper.Map<List<ToDoItemDto>>(items);
         }
 
+        // Garbage collector only for websockets
         private void SetupCleanUpTask()
         {
             Task.Run(async () =>
