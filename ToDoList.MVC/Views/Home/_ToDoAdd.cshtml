@@ -12,8 +12,6 @@
     <input type="submit" value="Add To-Do item" />
 </form>
 <script>
-    //const { fetchWrapper } = require("../../wwwroot/js/fetchWrapper");
-
     async function fetchWrapper(
         url,
         method,
@@ -22,9 +20,6 @@
         success,
         fail
     ) {
-        /*if (url === null || url == undefined || url === '') {
-            throw;
-        }*/
 
         const requestOptions = {
             headers: {
@@ -87,30 +82,13 @@
         form.addEventListener("submit", (e) => {
             e.preventDefault();
 
-            const postUrl = @*`@Url.Action("Post", "Home")?title=${submit.value}`*@'https://localhost:5001/api/ToDoItem/Post';
-            const refreshUrl = @*`@Url.Action("Refresh", "Login")`*@'https://localhost:5001/api/Account/refresh';
+            const postUrl = 'https://localhost:5001/api/ToDoItem/Post';
+            const refreshUrl = 'https://localhost:5001/api/Account/refresh';
 
-            @*const opts = {
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Accept': 'application/json',
-                    'Authorization': `Bearer ${localStorage.getItem('token') || null}`
-                },
-                method: 'POST'
-            };
-
-            fetch(`@Url.Action("Post", "Home")?title=${submit.value}`, opts)
-                .then(response => {
-                    if (response.ok) {
-                        webSocket.send("send");
-                    } else if (response.status === 401) {
-                        window.location.href = '@Url.Action("Index", "Login")';
-                    }
-                })
-                .catch(err => console.log(err));*@
             const data = {
                 Title: submit.value
             };
+
             fetchWrapper(
                 postUrl,
                 'POST',
@@ -119,8 +97,6 @@
                 () => webSocket.send("send"),
                 () => window.location.href = '@Url.Action("Index", "Login")'
             );
-
-            
         })
     }());
 </script>

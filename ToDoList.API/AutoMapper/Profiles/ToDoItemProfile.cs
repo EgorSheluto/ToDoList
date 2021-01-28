@@ -15,8 +15,6 @@ namespace ToDoList.API.AutoMapper.Profiles
             CreateMap<ToDoItemNewDto, ToDoItemModel>()
                 .ForMember(dest => dest.CreateDateUTC, source => source.MapFrom(_ => DateTime.UtcNow))
                 .ForMember(dest => dest.Status, source => source.MapFrom(_ => ToDoItemStatus.New));
-            /*CreateMap<ToDoItemUpdateDto, ToDoItemModel>()
-                .ForMember(dest => dest.UpdateDateUTC, );*/
         }
     }
 }

@@ -5,18 +5,16 @@
 }
 
 <form id="login-form" asp-action="Login" asp-controller="Login" method="post">
-    <table>
-        <tr>
-            <td><label asp-for="Login"></label></td>
-            <td><input asp-for="Login" /></td>
-            <td><span asp-validation-for="Login"></span></td>
-        </tr>
-        <tr>
-            <td><label asp-for="Password"></label></td>
-            <td><input asp-for="Password" /></td>
-            <td><span asp-validation-for="Password"></span></td>
-        </tr>
-    </table>
+    <div class="form-data">
+        <label asp-for="Login"></label>
+        <input asp-for="Login" />
+        <span class="error" asp-validation-for="Login"></span>
+    </div>
+    <div class="form-data">
+        <label asp-for="Password"></label>
+        <input asp-for="Password" />
+        <span class="error" asp-validation-for="Password"></span>
+    </div>
 
     <input type="submit" value="Login" />
 </form>
@@ -42,7 +40,7 @@
             };
 
             const url = 'https://localhost:5001/api/Account/Login';
-            fetch(@*`@Url.Action("Login", "Login")`*@url, opts)
+            fetch(url, opts)
                 .then(response => {
                     if (response.ok) {
                         return response.json();

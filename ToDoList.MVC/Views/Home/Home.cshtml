@@ -7,8 +7,6 @@
     <div id="to-do-list"></div>
 </section>
 <script>
-    //const { fetchWrapper } = require("../../wwwroot/js/fetchWrapper");
-
     let webSocket;
 
     (function () {
@@ -66,31 +64,14 @@
                     let itemId = itemSelect.parentNode.getAttribute("data-key");
                     let value = e.target.value;
 
-                    const updateUrl = @*`@Url.Action("Put", "Home")?id=${itemId}&statusId=${value}`*@'https://localhost:5001/api/ToDoItem/Put';
-                    const refreshUrl = @*`@Url.Action("Refresh", "Login")`*@'https://localhost:5001/api/Account/Refresh';
+                    const updateUrl = 'https://localhost:5001/api/ToDoItem/Put';
+                    const refreshUrl = 'https://localhost:5001/api/Account/Refresh';
 
-                    /*const opts = {
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'Accept': 'application/json',
-                            'Authorization': `Bearer ${localStorage.getItem('token') || null}`
-                        },
-                        method: 'PUT'
-                    };*/
-
-                    @*fetch(`@Url.Action("Put", "Home")?id=${itemId}&statusId=${value}`, opts)
-                        .then(response => {
-                            if (response.ok) {
-                                webSocket.send("send");
-                            } else if (response.status === 401) {
-                                window.location.href = '@Url.Action("Index", "Login")';
-                            }
-                        })
-                        .catch(err => console.log(err));*@
                     const data = {
                         Id: itemId,
                         StatusId: value
                     };
+
                     fetchWrapper(
                         updateUrl,
                         'PUT',

@@ -4,6 +4,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"] - To-Do List</title>
+    <link rel="stylesheet" href="~/css/index.css" />
 </head>
 <body>
     @RenderBody()
@@ -12,9 +13,4 @@
 </body>
 </html>
 <script>
-    (function () {
-        if (!(localStorage.getItem("token") && localStorage.getItem("token"))) {
-            () => window.location.href = '@Url.Action("Index", "Login")';
-        }
-    }())
 </script>

@@ -38,15 +38,6 @@ namespace ToDoList.MVC
                 app.UseHsts();
             }
 
-            /*app.UseFileServer(new FileServerOptions()
-            {
-                FileProvider = new PhysicalFileProvider(
-                    Path.Combine(env.ContentRootPath, "node_modules")
-                ),
-                RequestPath = "/node_modules",
-                EnableDirectoryBrowsing = false
-            });*/
-
             app.UseStaticFiles();
 
             app.UseHttpsRedirection();

@@ -9,7 +9,7 @@ namespace ToDoList.DAL.Contexts
         public Context(DbContextOptions<Context> options)
             : base(options)
         {
-
+            //Database.Migrate();
         }
 
         public DbSet<ToDoItemModel> ToDoItems { get; set; }

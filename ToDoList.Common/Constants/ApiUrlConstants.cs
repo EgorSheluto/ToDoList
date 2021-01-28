@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace ToDoList.Common.Constants
+﻿namespace ToDoList.Common.Constants
 {
     public static class ApiUrlConstants
     {
@@ -13,15 +9,5 @@ namespace ToDoList.Common.Constants
 
         public static readonly string HttpUrl = $"{HttpProtocol}://{Domain}/api";
         public static readonly string WssUrl = $"{WssProtocol}://{Domain}/api";
-
-        public struct Home
-        {
-
-        }
-
-        public struct Login
-        {
-
-        }
     }
 }

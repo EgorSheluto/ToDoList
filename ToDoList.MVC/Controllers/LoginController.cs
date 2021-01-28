@@ -30,7 +30,7 @@ namespace ToDoList.MVC.Controllers
 
                 if (response.IsSuccessful)
                 {
-                    return /*await Task.Run(() => RedirectToAction("Index", "Home"))*/Json(data);
+                    return Json(data);
                 }
             }
 
@@ -56,7 +56,7 @@ namespace ToDoList.MVC.Controllers
 
                 if (response.IsSuccessful)
                 {
-                    return /*await Task.Run(() => RedirectToAction("Index", "Home"))*/Json(data);
+                    return Json(data);
                 }
             }
 

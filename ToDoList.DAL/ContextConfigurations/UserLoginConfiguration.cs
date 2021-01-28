@@ -8,7 +8,6 @@ namespace ToDoList.DAL.ContextConfigurations
     {
         public virtual void Configure(EntityTypeBuilder<UserLoginModel> builder)
         {
-            //base.Configure(builder);
             builder?.ToTable("UsersLogins");
 
             builder.Property(p => p.ExpireDateUTC).IsRequired();
